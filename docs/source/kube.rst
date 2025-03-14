@@ -1,7 +1,7 @@
-Scaling [--solutionname--] With Kubernetes
+Scaling [_mysolution_-ml_ai_dag-cybersecuritywi-534a] With Kubernetes
 ===========================
 
-Generated On: --datetime-- UTC
+Generated On: 2025-03-14 19:34:59 UTC
 
 You can scale your solution with Kubernetes.  To do so, will will need to apply the following YAML files to your Kubernetes cluster.
 
@@ -35,13 +35,13 @@ You can scale your solution with Kubernetes.  To do so, will will need to apply 
    sudo systemctl restart docker
 
 
-Based on your TML solution [--solutionname--] - if you want to scale your application with Kubernetes - you will need to apply the following YAML files.
+Based on your TML solution [_mysolution_-ml_ai_dag-cybersecuritywi-534a] - if you want to scale your application with Kubernetes - you will need to apply the following YAML files.
 
 .. list-table::
 
    * - **YML File**
      - **Description**
-   * - :ref:`--solutionnamefile--`
+   * - :ref:`_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml`
      - This is your main solution YAML file.  
  
        It MUST be applied to your Kubernetes cluster.
@@ -75,10 +75,10 @@ Based on your TML solution [--solutionname--] - if you want to scale your applic
        This is OPTIONAL.  However, it must be 
  
        applied if using Step 9 DAG.
-   * - :ref:`nginx-ingress---nginxname--.yml`
+   * - :ref:`nginx-ingress-_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml`
      - If you are scaling your TML solution you must
 
-       apply the nginx-ingress--nginxname--.yml; this yaml is 
+       apply the nginx-ingress_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml; this yaml is 
 
        auto-generated for every TML solution.
 
@@ -94,13 +94,13 @@ kubectl Apply command
 
 .. code-block:: YAML
 
-   --kubectl--
+   kubectl apply -f kafka.yml -f secrets.yml -f mysql-storage.yml -f mysql-db-deployment.yml -f qdrant.yml -f privategpt.yml -f _mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
 
---solutionnamefile--
+_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
 ------------------------
 
 .. important::
-   Copy and Paste this YAML file: --solutionnamefile-- - and save it locally.
+   Copy and Paste this YAML file: _mysolution_-ml_ai_dag-cybersecuritywi-534a.yml - and save it locally.
 
 .. attention::
 
@@ -118,8 +118,185 @@ kubectl Apply command
 
 .. code-block:: YAML
 
-   ################# --solutionnamefile--
-   --solutionnamecode--
+   ################# _mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
+   
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: _mysolution_-ml_ai_dag-cybersecuritywi-534a
+     spec:
+       selector:
+         matchLabels:
+           app: _mysolution_-ml_ai_dag-cybersecuritywi-534a
+       replicas: 3 # tells deployment to run 1 pods matching the template
+       template:
+         metadata:
+           labels:
+             app: _mysolution_-ml_ai_dag-cybersecuritywi-534a
+         spec:
+           containers:
+           - name: _mysolution_-ml_ai_dag-cybersecuritywi-534a
+             image: jeremykpark/_mysolution_-ml_ai_dag-cybersecuritywi-534a-amd64:latest
+             volumeMounts:
+             - name: dockerpath
+               mountPath: /var/run/docker.sock
+             ports:
+             - containerPort: 5050
+             - containerPort: 4040
+             - containerPort: 6060
+             env:
+             - name: TSS
+               value: '0'
+             - name: PROJECTNAME
+               value: '_mysolution_'                              
+             - name: SOLUTIONNAME
+               value: '_mysolution_-ml_ai_dag-cybersecuritywi-534a'
+             - name: SOLUTIONDAG
+               value: 'solution_preprocessing_ml_ai_dag-cybersecuritywithprivategpt-534a'
+             - name: GITUSERNAME
+               value: 'jeremykpark'
+             - name: GITREPOURL
+               value: 'https://github.com/jeremykpark/tml-raspberrypi.git'
+             - name: SOLUTIONEXTERNALPORT
+               value: '5050'
+             - name: CHIP
+               value: 'amd64'
+             - name: SOLUTIONAIRFLOWPORT
+               value: '4040'
+             - name: SOLUTIONVIPERVIZPORT
+               value: '6060'
+             - name: DOCKERUSERNAME
+               value: 'jeremykpark'
+             - name: CLIENTPORT
+               value: '0'
+             - name: EXTERNALPORT
+               value: '9010'
+             - name: KAFKACLOUDUSERNAME
+               value: 'KV4GV4NF2H33GAPT'
+             - name: VIPERVIZPORT
+               value: '9005'
+             - name: MQTTUSERNAME
+               value: 'tsstestcluser234'
+             - name: AIRFLOWPORT
+               value: '9000'
+             - name: GITPASSWORD
+               valueFrom:
+                 secretKeyRef:
+                  name: tmlsecrets 
+                  key: githubtoken                       
+             - name: KAFKACLOUDPASSWORD
+               valueFrom:
+                 secretKeyRef:
+                  name: tmlsecrets 
+                  key: kafkacloudpassword                      
+             - name: MQTTPASSWORD
+               valueFrom: 
+                 secretKeyRef:
+                   name: tmlsecrets 
+                   key: mqttpass                        
+             - name: READTHEDOCS
+               valueFrom:
+                 secretKeyRef:
+                   name: tmlsecrets 
+                   key: readthedocs          
+             - name: qip 
+               value: 'privategpt-service' # This is private GPT service in kubernetes
+             - name: KUBE
+               value: '1'
+             - name: step4maxrows # STEP 4 maxrows field can be adjusted here.  Higher the number more data to process, BUT more memory needed.
+               value: '800'
+             - name: step4bmaxrows # STEP 4b maxrows field can be adjusted here.  Higher the number more data to process, BUT more memory needed.
+               value: '-1'               
+             - name: step4cmaxrows # STEP 4c maxrows field can be adjusted here.  Higher the number more data to process, BUT more memory needed.
+               value: '-1'               
+             - name: step4crawdatatopic # STEP 4c
+               value: ''               
+             - name: step4csearchterms # STEP 4c 
+               value: ''               
+             - name: step4crememberpastwindows # STEP 4c 
+               value: ''               
+             - name: step4cpatternwindowthreshold # STEP 4c 
+               value: ''               
+             - name: step4crtmsscorethreshold # STEP 4c 
+               value: '' 
+             - name: step4cattackscorethreshold # STEP 4c 
+               value: '' 
+             - name: step4cpatternscorethreshold # STEP 4c 
+               value: ''                
+             - name: step4crtmsstream # STEP 4c 
+               value: ''                              
+             - name: step4clocalsearchtermfolder # STEP 4c 
+               value: ''                              
+             - name: step4clocalsearchtermfolderinterval # STEP 4c 
+               value: ''                                                            
+             - name: step5rollbackoffsets # STEP 5 rollbackoffsets field can be adjusted here.  Higher the number more training data to process, BUT more memory needed.
+               value: '300'                              
+             - name: step5processlogic # STEP 5 processlogic field can be adjusted here.  
+               value: ''                                                
+             - name: step5independentvariables # STEP 5 independent variables can be adjusted here.  
+               value: ''                                                                              
+             - name: step6maxrows # STEP 6 maxrows field can be adjusted here.  Higher the number more predictions to make, BUT more memory needed.
+               value: '50'                              
+             - name: step9rollbackoffset # STEP 9 rollbackoffset field can be adjusted here.  Higher the number more information sent to privateGPT, BUT more memory needed.
+               value: '5'                  
+             - name: step9prompt # STEP 9 Enter PGPT prompt
+               value: '[INST] Are there any errors in the logs associated with rhost=--identifier--? Give a detailed response including IP addresses and host machines.[/INST]'                  
+             - name: step9context # STEP 9 Enter PGPT context
+               value: 'This is network data from inbound and outbound packets. The data are anomaly probabilities for cyber threats from analysis of inbound and outbound packets. If inbound or outbound anomaly probabilities are less than 0.60, it is likely the risk of a cyber attack is also low. If its above 0.60, then risk is mid to high.'                                 
+             - name: step9keyattribute
+               value: 'inboundpackets,outboundpackets' # Step 9 key attribtes change as needed  
+             - name: step9keyprocesstype
+               value: 'anomprob' # Step 9 key processtypes change as needed                                               
+             - name: step9hyperbatch
+               value: '0' # Set to 1 if you want to batch all of the hyperpredictions and sent to chatgpt, set to 0, if you want to send it one by one   
+             - name: step9vectordbcollectionname
+               value: 'tml-llm-model-v2'   # collection name in Qdrant
+             - name: step9concurrency # privateGPT concurency, if greater than 1, multiple PGPT will run
+               value: '2'
+             - name: CUDA_VISIBLE_DEVICES
+               value: '0' # 0 for any device or specify specific number                
+             - name: step9docfolder # privateGPT docfolder to load files in Qdrant vectorDB local context
+               value: 'mylogs,mylogs2'
+             - name: step9docfolderingestinterval # privateGPT docfolderingestinterval, number of seconds to wait before reloading files in docfolder
+               value: '900'
+             - name: step9useidentifierinprompt # privateGPT useidentifierinprompt, if 1, add TML output json field Identifier, if 0 use prompt
+               value: '1'                              
+             - name: step9searchterms # privateGPT searchterms, terms to search for in the chat response
+               value: '192.168.--identifier--,authentication failure'                                             
+             - name: step9streamall # privateGPT streamall, if 1, stream all responses, even if search terms are missing, 0, if response contains search terms
+               value: '1'                                                            
+             - name: step9temperature # privateGPT LLM temperature between 0 and 1 i.e. 0.3, if 0, LLM model is conservative, if 1 it hallucinates
+               value: '0.1'                                             
+             - name: step9vectorsearchtype # privateGPT for QDrant VectorDB similarity search.  Must be either Cosine, Manhattan, Dot, Euclid
+               value: 'Manhattan'                                                                           
+             - name: step1solutiontitle # STEP 1 solutiontitle field can be adjusted here. 
+               value: 'My Solution Title'                              
+             - name: step1description # STEP 1 description field can be adjusted here. 
+               value: 'This is an awesome real-time solution built by TSS'                                          
+             - name: KUBEBROKERHOST
+               value: 'kafka-service:9092'         
+             - name: KAFKABROKERHOST
+               value: '127.0.0.1:9092'                              
+           volumes: 
+           - name: dockerpath
+             hostPath:
+               path: /var/run/docker.sock
+   ---
+     apiVersion: v1
+     kind: Service
+     metadata:
+       name: _mysolution_-ml_ai_dag-cybersecuritywi-534a-visualization-service
+       labels:
+         app: _mysolution_-ml_ai_dag-cybersecuritywi-534a-visualization-service
+     spec:
+       type: ClusterIP
+       ports:
+       - port: 80 # Ingress port, if using port 443 will need to setup TLS certs
+         name: p1
+         protocol: TCP
+         targetPort: 6060
+       selector:
+         app: _mysolution_-ml_ai_dag-cybersecuritywi-534a
 
 .. tip::
 
@@ -448,13 +625,13 @@ To visualize the dashboard you need to forward ports to your solution **deployme
 
 .. code-block::
 
-   --kube-portforward--
+   kubectl port-forward deployment/_mysolution_-ml_ai_dag-cybersecuritywi-534a 6060:6060
 
 After you forward the ports then copy/paste the viusalization URL below and run your dashboard.
 
 .. code-block::
 
-   --visualizationurl--
+   http://localhost:6060/?topic=&offset=-1&groupid=&rollbackoffset=400&topictype=prediction&append=0&secure=1
 
 Scaling with NGINX Ingress and Ingress Controller
 -------------------------------------
@@ -505,18 +682,49 @@ All TML solutions will scale with NGINX ingress to perform load-balancing.  But,
 
       minikube tunnel
 
-   **STEP 4:  Apply nginx-ingress---nginxname--.yml to your kubernetes cluster.  First you need to save it locally then apply it:**
+   **STEP 4:  Apply nginx-ingress-_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml to your kubernetes cluster.  First you need to save it locally then apply it:**
 
-nginx-ingress---nginxname--.yml
+nginx-ingress-_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
 -------------
 
    .. code-block::
 
-      --ingress--
+      
+    ############# nginx-ingress-_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: tml-ingress
+      annotations:
+        nginx.ingress.kubernetes.io/use-regex: "true"
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+    spec:
+      ingressClassName: nginx
+      rules:
+        - host: tml.tss
+          http:
+            paths:
+              - path: /viz(/|$)(.*)
+                pathType: ImplementationSpecific
+                backend:
+                  service:
+                    name: _mysolution_-ml_ai_dag-cybersecuritywi-534a-visualization-service
+                    port:
+                      number: 80
+    ---
+    apiVersion: v1
+    kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: ingress-nginx-controller
+      namespace: ingress-nginx
+    data:
+      allow-snippet-annotations: "true"
+  
 
    .. code-block::
 
-      kubectl apply -f nginx-ingress---nginxname--.yml
+      kubectl apply -f nginx-ingress-_mysolution_-ml_ai_dag-cybersecuritywi-534a.yml
 
 You are now ready to run the Dashboard using Ingress load balancing.
 
@@ -527,7 +735,7 @@ Copy and paste this URL below in your browser and start streaming.  Because you 
 
 .. code-block::
 
-   --visualizationurling--
+   http://tml.tss/viz/?topic=&offset=-1&groupid=&rollbackoffset=400&topictype=prediction&append=0&secure=1
 
 Making Secure TLS Connection with gRPC
 -----------------------
